@@ -204,7 +204,8 @@ void initialized(JSONValue nothing)
         import dls.updater : update;
         import std.concurrency : spawn;
 
-        spawn(&update, initOptions.autoUpdate, initOptions.preReleaseBuilds);
+        // ... disable autoupdate also in release
+        // spawn(&update, initOptions.autoUpdate, initOptions.preReleaseBuilds);
     }
 
     if (!initState.capabilities.workspace.isNull)
