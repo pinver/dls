@@ -259,7 +259,7 @@ class AnalysisTool : Tool
         import std.utf : toUTF16;
 
         logger.info("Fetching diagnostics for %s", uri.path);
-
+        
         auto stringCache = StringCache(StringCache.defaultBucketCount);
         auto tokens = getTokensForParser(Document.get(uri).toString(),
                 LexerConfig(uri.path, StringBehavior.source), &stringCache);
@@ -286,6 +286,10 @@ class AnalysisTool : Tool
 
         foreach (result; analysisResults)
         {
+            // ... be resilient to wrong dscanner line number (dscanner 0.10.0)
+            // import std.stdio; stderr.writefln("document lines:%d, result.line:%d %s",document.lines.length, result.line, result);
+            // document lines:5038, result.line:18446744073709551615 const(Message)("/Users/pinver/Projects/Workspace/DeepGlance/fieldmanager/src/arsd/ttf.d", 18446744073709551615, 18446744073709551615, "dscanner.confusing.argument_parameter_mismatch", "Argument 6 is named 'x0', but this is the name of p
+            if( result.line < 18446744073709551615 )
             if (!document.lines[minusOne(result.line)].matchFirst(
                     regex(`//.*@suppress\s*\(\s*`w ~ result.key.toUTF16() ~ `\s*\)`w)))
             {
